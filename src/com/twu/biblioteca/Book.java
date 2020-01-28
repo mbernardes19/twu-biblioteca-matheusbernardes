@@ -3,18 +3,18 @@ package com.twu.biblioteca;
 public class Book {
     private String title;
     private String author;
-    private String publishDate;
+    private String publicationYear;
 
-    public Book(String title, String author, String publishDate) {
+    public Book(String title, String author, String publicationYear) {
         this.title = title;
         this.author = author;
-        this.publishDate = publishDate;
+        this.publicationYear = publicationYear;
     }
 
     public Book() {
         this.title = null;
         this.author = null;
-        this.publishDate = null;
+        this.publicationYear = null;
     }
 
     public String getTitle() {
@@ -33,11 +33,11 @@ public class Book {
         this.author = author;
     }
 
-    public String getPublishDate() {
-        return publishDate;
+    public String getPublicationYear() {
+        return publicationYear;
     }
 
-    public void setPublishDate(String publishDate) {
-        this.publishDate = publishDate;
+    public void setPublicationYear(String publicationYear) {
+        this.publicationYear = publicationYear;
     }
 }

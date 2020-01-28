@@ -18,7 +18,7 @@ public class BookTest {
     public void shouldCreateANulledBook() {
         assertEquals(null, book.getTitle());
         assertEquals(null, book.getAuthor());
-        assertEquals(null, book.getPublishDate());
+        assertEquals(null, book.getPublicationYear());
     }
 
     @Test
@@ -26,6 +26,6 @@ public class BookTest {
         Book newBook = new Book("The Test Book", "Matheus", "2020");
         assertEquals("The Test Book", newBook.getTitle());
         assertEquals("Matheus", newBook.getAuthor());
-        assertEquals("2020", newBook.getPublishDate());
+        assertEquals("2020", newBook.getPublicationYear());
     }
 }
