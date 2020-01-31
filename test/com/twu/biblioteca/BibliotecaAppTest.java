@@ -149,7 +149,7 @@ public class BibliotecaAppTest {
     }
 
     @Test(expected = BookNotFoundException.class)
-    public void shouldThrowError_IfSelectedBookForCheckOutDoesntExist() throws BookNotFoundException {
+    public void shouldThrowError_IfSelectedBookForCheckOutDoesNotExist() throws BookNotFoundException {
         app.selectBookById(45, BookListOption.AVAILABLE_BOOKS);
     }
 
@@ -193,5 +193,18 @@ public class BibliotecaAppTest {
     @Test
     public void shouldSendSucessMessageOnBookReturn() {
         assertEquals("Thank you for returning the book\n", app.BOOK_RETURN_SUCCESS_MESSAGE);
+    }
+
+    @Test(expected = BookNotFoundException.class)
+    public void shouldThrowError_IfSelectedBookForReturnDoesNotExist() throws BookNotFoundException {
+        app.selectBookById(1, BookListOption.CHECKEDOUT_BOOKS);
+    }
+
+    @Test(expected = BookNotFoundException.class)
+    public void shouldThrowError_IfSelectedBookForReturnDoesNotExist2() throws BookNotFoundException {
+        app.checkoutBook(1);
+        app.checkoutBook(2);
+        app.selectBookById(1, BookListOption.CHECKEDOUT_BOOKS);
+        app.selectBookById(3, BookListOption.CHECKEDOUT_BOOKS);
     }
 }

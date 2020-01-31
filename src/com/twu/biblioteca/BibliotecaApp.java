@@ -12,6 +12,7 @@ public class BibliotecaApp {
     public static final String BOOK_CHECKOUT_SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
     public static final String BOOK_CHECKOUT_ERROR_MESSAGE = "Sorry, that book is not available\n";
     public static final String BOOK_RETURN_SUCCESS_MESSAGE = "Thank you for returning the book\n";
+    public static final String BOOK_RETURN_ERROR_MESSAGE = "That is not a valid book to return\n";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
@@ -183,7 +184,7 @@ public class BibliotecaApp {
             returnBook(getBookIdInput());
             showMessage(BOOK_RETURN_SUCCESS_MESSAGE);
         } catch (BookNotFoundException err) {
-
+            showMessage(BOOK_RETURN_ERROR_MESSAGE);
         }
     }
 
