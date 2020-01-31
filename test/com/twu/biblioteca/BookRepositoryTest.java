@@ -28,7 +28,7 @@ public class BookRepositoryTest {
     }
 
     @Test
-    public void shouldFindABook() {
+    public void shouldFindABook() throws BookNotFoundException {
         Book expectedBook = new Book(1, "Orope: The White Snake","Guenevere Lee", "2018");
         Book foundBook = bookRepo.findBookById(1);
         assertEquals(foundBook, expectedBook);
@@ -39,6 +39,11 @@ public class BookRepositoryTest {
         Book expectedBook = new Book(1, "Orope: The White Snake","Guenevere Lee", "2018");
         bookRepo.removeBook(expectedBook);
         assertFalse(bookRepo.getAvailableBooks().contains(expectedBook));
+    }
+
+    @Test(expected = BookNotFoundException.class)
+    public void shouldThrowExceptionWhenSearchingForBookThatDoesntExist() throws BookNotFoundException {
+        bookRepo.findBookById(45);
     }
 
 }

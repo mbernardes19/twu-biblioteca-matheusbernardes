@@ -126,14 +126,14 @@ public class BibliotecaAppTest {
     }
 
     @Test
-    public void shouldCheckoutABook() {
+    public void shouldCheckoutABook() throws BookNotFoundException {
         Book expectedBook = new Book(3, "Orope: The White Snake", "Guenevere Lee", "2018");
         app.checkoutBook(3);
         assertFalse(app.getAvailableBooks().contains(expectedBook));
     }
 
     @Test
-    public void shouldSelectABookToMakeAnAction() {
+    public void shouldSelectABookToMakeAnAction() throws BookNotFoundException {
         Book expectedBook = new Book(2, "Orope: The White Snake", "Guenevere Lee", "2018");
         app.selectBookById(2);
         assertEquals(expectedBook, app.getSelectedBook());
@@ -141,7 +141,12 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldSendSucessMessageOnBookCheckout() {
-        assertEquals("Thank you! Enjoy the book\n", app.SUCCESS_MESSAGE);
+        assertEquals("Thank you! Enjoy the book\n", app.BOOK_CHECKOUT_SUCCESS_MESSAGE);
+    }
+
+    @Test(expected = BookNotFoundException.class)
+    public void shouldThrowError_IfSelectedBookForCheckOutDoesntExist() throws BookNotFoundException {
+        app.selectBookById(45);
     }
 
 }

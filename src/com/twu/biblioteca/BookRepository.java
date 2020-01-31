@@ -30,11 +30,11 @@ public class BookRepository {
         this.availableBooks = bookList;
     }
 
-    public Book findBookById(int id) {
+    public Book findBookById(int id) throws BookNotFoundException {
         Book bookFound = availableBooks.stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new BookNotFoundException("Sorry, that book is not available"));
         return bookFound;
     }
 

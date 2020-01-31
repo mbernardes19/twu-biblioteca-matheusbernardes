@@ -9,7 +9,8 @@ import java.util.Scanner;
 public class BibliotecaApp {
     private static final String WELCOME_MESSAGE = "Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!";
     private static final String ERROR_MESSAGE = "Please select a valid option!";
-    public static final String SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
+    public static final String BOOK_CHECKOUT_SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
+    public static final String BOOK_CHECKOUT_ERROR_MESSAGE = "Sorry, that book is not available\n";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
@@ -78,8 +79,12 @@ public class BibliotecaApp {
                 selectedOption = MainMenuOption.OPTION_2;
                 showMessage("Select a book to checkout: ");
                 showMessage(getCheckoutableBooks());
-                checkoutBook(getBookIdInput());
-                showMessage(SUCCESS_MESSAGE);
+                try {
+                    checkoutBook(getBookIdInput());
+                    showMessage(BOOK_CHECKOUT_SUCCESS_MESSAGE);
+                } catch(BookNotFoundException err) {
+                    showMessage(BOOK_CHECKOUT_ERROR_MESSAGE);
+                }
                 break;
             default:
                 throw new InvalidParameterException("Please select a valid option!");
@@ -116,12 +121,12 @@ public class BibliotecaApp {
         return message;
     }
 
-    public void checkoutBook(int bookId) {
+    public void checkoutBook(int bookId) throws BookNotFoundException {
         selectBookById(bookId);
         bookRepository.removeBook(getSelectedBook());
     }
 
-    public void selectBookById(int id) {
+    public void selectBookById(int id) throws BookNotFoundException {
         Book foundBook = bookRepository.findBookById(id);
         selectedBook = foundBook;
     }
