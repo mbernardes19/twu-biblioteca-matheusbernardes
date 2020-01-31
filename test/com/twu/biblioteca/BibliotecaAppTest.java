@@ -1,17 +1,13 @@
 package com.twu.biblioteca;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.stubbing.Answer;
-
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class BibliotecaAppTest {
 
@@ -24,13 +20,13 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldDisplayWelcomeMessage() {
-        BibliotecaApp.welcomeMessage();
-        assertEquals("Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!\n", BibliotecaApp.welcomeMessage());
+        BibliotecaApp.getWelcomeMessage();
+        assertEquals("Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!", BibliotecaApp.getWelcomeMessage());
     }
 
     @Test
     public void shouldShowAListOfAllAvailableBooks(){
-        String allBooks = app.allBooks();
+        String allBooks = app.getAllBooks();
         assertTrue(
                 allBooks.contains("Orope: The White Snake") &&
                         allBooks.contains("The Great Gatsby") &&
@@ -51,7 +47,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldShowBooksAuthorAndPublicationYear() {
-        String expectedBooks = app.allBooks();
+        String expectedBooks = app.getAllBooks();
         assertTrue(
                 expectedBooks.contains("Guenevere Lee") &&
                         expectedBooks.contains("2018") &&
@@ -69,7 +65,7 @@ public class BibliotecaAppTest {
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "The Great Gatsby", "F. Scott Fitzgerald", "1925");
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "Boulevard Dreams", "E. Ryan Janz", "2018");
 
-        assertEquals(expected, app.allBooks());
+        assertEquals(expected, app.getAllBooks());
     }
 
     @Test
@@ -82,5 +78,10 @@ public class BibliotecaAppTest {
          app.selectOption(1);
          assertEquals("1 - List of books", BibliotecaApp.getSelectedOption().getDescription());
          assertEquals(1, BibliotecaApp.getSelectedOption().getValue());
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void ShouldThrowInvalidParameterException_IfASelectedOptionIsValid() {
+        app.selectOption(50);
     }
 }

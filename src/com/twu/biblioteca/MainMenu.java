@@ -18,7 +18,7 @@ public class MainMenu {
         return optionList;
     }
 
-    private MainMenuOption[] getMainMenuOptions() {
+    public MainMenuOption[] getMainMenuOptions() {
         return MainMenuOption.class.getEnumConstants();
     }
 }
