@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class BibliotecaApp {
     private static final String WELCOME_MESSAGE = "Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!";
     private static final String ERROR_MESSAGE = "Please select a valid option!";
+    public static final String SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
@@ -77,9 +78,8 @@ public class BibliotecaApp {
                 selectedOption = MainMenuOption.OPTION_2;
                 showMessage("Select a book to checkout: ");
                 showMessage(getCheckoutableBooks());
-                String bookIdInput = startInput().next();
-                int bookId = Integer.parseInt(bookIdInput);
-                checkoutBook(bookId);
+                checkoutBook(getBookIdInput());
+                showMessage(SUCCESS_MESSAGE);
                 break;
             default:
                 throw new InvalidParameterException("Please select a valid option!");
@@ -128,5 +128,11 @@ public class BibliotecaApp {
 
     public Book getSelectedBook() {
         return selectedBook;
+    }
+
+    private int getBookIdInput() {
+        String bookIdInput = startInput().next();
+        int bookId = Integer.parseInt(bookIdInput);
+        return bookId;
     }
 }

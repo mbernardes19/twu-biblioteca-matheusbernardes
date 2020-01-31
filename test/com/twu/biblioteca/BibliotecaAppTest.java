@@ -139,4 +139,9 @@ public class BibliotecaAppTest {
         assertEquals(expectedBook, app.getSelectedBook());
     }
 
+    @Test
+    public void shouldSendSucessMessageOnBookCheckout() {
+        assertEquals("Thank you! Enjoy the book\n", app.SUCCESS_MESSAGE);
+    }
+
 }
