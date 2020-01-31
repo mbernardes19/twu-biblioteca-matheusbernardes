@@ -16,6 +16,6 @@ public class MainMenuTest {
 
     @Test
     public void shouldShowAllOptions() {
-        assertEquals(menu.showOptions(), "1 - List of books\n");
+        assertEquals(menu.showOptions(), "1 - List of books\n2 - Checkout a book\n0 - Exit\n");
     }
 }

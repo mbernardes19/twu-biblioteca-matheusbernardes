@@ -10,9 +10,11 @@ public class BibliotecaApp {
     private static final String WELCOME_MESSAGE = "Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!";
     private static final String ERROR_MESSAGE = "Please select a valid option!";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
-    private static List<Book> availableBooks = new ArrayList<>();
+    private static BookRepository bookRepository = new BookRepository();
+    private static List<Book> availableBooks = bookRepository.getAvailableBooks();
     private static MainMenu mainMenu = new MainMenu();
     private static MainMenuOption selectedOption;
+    private Book selectedBook;
 
     public static void main(String[] args) {
         BibliotecaApp app = new BibliotecaApp();
@@ -20,7 +22,7 @@ public class BibliotecaApp {
         Scanner input = startInput();
 
         // Show main menu and check selected option
-        while(!isSelectedOptionValid()) {
+        while(!isSelectedOptionValid() || selectedOption != MainMenuOption.OPTION_0) {
             try {
                 showMessage(mainMenuOptions());
                 app.selectOption(input.nextInt());
@@ -31,21 +33,8 @@ public class BibliotecaApp {
 
     }
 
-    public BibliotecaApp() {
-        populateAvailableBooks();
-    }
-
     private static void showMessage(String message) {
         System.out.println(message);
-    }
-
-    private void populateAvailableBooks() {
-        if (availableBooks.size() == 3) {
-            return;
-        }
-        availableBooks.add(new Book("Orope: The White Snake","Guenevere Lee", "2018"));
-        availableBooks.add(new Book("The Great Gatsby","F. Scott Fitzgerald", "1925"));
-        availableBooks.add(new Book("Boulevard Dreams","E. Ryan Janz", "2018"));
     }
 
     public static String getWelcomeMessage() {
@@ -54,7 +43,7 @@ public class BibliotecaApp {
 
     public String getAllBooks() {
         String message = showAsTable("TITLE","AUTHOR", "PUBLICATION YEAR");
-        for (Book availableBook : availableBooks) {
+        for (Book availableBook : getAvailableBooks()) {
             message += showAsTable(availableBook.getTitle(), availableBook.getAuthor(), availableBook.getPublicationYear());
         }
         return message;
@@ -68,8 +57,12 @@ public class BibliotecaApp {
         return mainMenu.showOptions();
     }
 
-    public static List<Book> getAvailableBooks() {
-        return availableBooks;
+    public List<Book> getAvailableBooks() {
+        return bookRepository.getAvailableBooks();
+    }
+
+    public void setAvailableBooks(List<Book> bookList) {
+        bookRepository.setAvailableBooks(bookList);
     }
 
     public void selectOption(int optionNumber) throws InvalidParameterException {
@@ -79,6 +72,14 @@ public class BibliotecaApp {
             case 1:
                 selectedOption = MainMenuOption.OPTION_1;
                 showMessage(getAllBooks());
+                break;
+            case 2:
+                selectedOption = MainMenuOption.OPTION_2;
+                showMessage("Select a book to checkout: ");
+                showMessage(getCheckoutableBooks());
+                String bookIdInput = startInput().next();
+                int bookId = Integer.parseInt(bookIdInput);
+                checkoutBook(bookId);
                 break;
             default:
                 throw new InvalidParameterException("Please select a valid option!");
@@ -105,5 +106,27 @@ public class BibliotecaApp {
     private static Scanner startInput() {
         Scanner input = new Scanner(System.in);
         return input;
+    }
+
+    public String getCheckoutableBooks() {
+        String message = "";
+        for (Book checkoutableBook : getAvailableBooks()) {
+            message += checkoutableBook.getId() + ". " + checkoutableBook.getTitle() + "\n";
+        }
+        return message;
+    }
+
+    public void checkoutBook(int bookId) {
+        selectBookById(bookId);
+        bookRepository.removeBook(getSelectedBook());
+    }
+
+    public void selectBookById(int id) {
+        Book foundBook = bookRepository.findBookById(id);
+        selectedBook = foundBook;
+    }
+
+    public Book getSelectedBook() {
+        return selectedBook;
     }
 }

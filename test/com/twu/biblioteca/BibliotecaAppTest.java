@@ -6,9 +6,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
@@ -18,10 +22,18 @@ public class BibliotecaAppTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     private BibliotecaApp app;
+    private List<Book> expectedAvailableBooks;
 
     @Before
     public void before() {
         app = new BibliotecaApp();
+
+        expectedAvailableBooks = new ArrayList<>();
+        expectedAvailableBooks.add(new Book(1,"Orope: The White Snake","Guenevere Lee", "2018"));
+        expectedAvailableBooks.add(new Book(2,"The Great Gatsby","F. Scott Fitzgerald", "1925"));
+        expectedAvailableBooks.add(new Book(3,"Boulevard Dreams","E. Ryan Janz", "2018"));
+
+        app.setAvailableBooks(expectedAvailableBooks);
     }
 
     @Test
@@ -43,12 +55,12 @@ public class BibliotecaAppTest {
     @Test
     public void availableBooksShouldBePopulatedFromStart() {
         List<Book> expectedAvailableBooks = new ArrayList<>();
-        expectedAvailableBooks.add(new Book("Orope: The White Snake","Guenevere Lee", "2018"));
-        expectedAvailableBooks.add(new Book("The Great Gatsby","F. Scott Fitzgerald", "1925"));
-        expectedAvailableBooks.add(new Book("Boulevard Dreams","E. Ryan Janz", "2018"));
-        assertEquals(BibliotecaApp.getAvailableBooks().get(0).getTitle(), expectedAvailableBooks.get(0).getTitle());
-        assertEquals(BibliotecaApp.getAvailableBooks().get(1).getTitle(), expectedAvailableBooks.get(1).getTitle());
-        assertEquals(BibliotecaApp.getAvailableBooks().get(2).getTitle(), expectedAvailableBooks.get(2).getTitle());
+        expectedAvailableBooks.add(new Book(1,"Orope: The White Snake","Guenevere Lee", "2018"));
+        expectedAvailableBooks.add(new Book(2,"The Great Gatsby","F. Scott Fitzgerald", "1925"));
+        expectedAvailableBooks.add(new Book(3,"Boulevard Dreams","E. Ryan Janz", "2018"));
+        assertEquals(app.getAvailableBooks().get(0).getTitle(), expectedAvailableBooks.get(0).getTitle());
+        assertEquals(app.getAvailableBooks().get(1).getTitle(), expectedAvailableBooks.get(1).getTitle());
+        assertEquals(app.getAvailableBooks().get(2).getTitle(), expectedAvailableBooks.get(2).getTitle());
     }
 
     @Test
@@ -75,8 +87,8 @@ public class BibliotecaAppTest {
     }
 
     @Test
-    public void shouldFirstMainMenuOption() {
-        assertEquals("1 - List of books\n", BibliotecaApp.mainMenuOptions());
+    public void shouldShowFirstMainMenuOption() {
+        assertTrue(BibliotecaApp.mainMenuOptions().contains("1 - List of books\n"));
     }
 
     @Test
@@ -96,4 +108,35 @@ public class BibliotecaAppTest {
         exit.expectSystemExit();
         app.selectOption(0);
     }
+
+    @Test
+    public void ifTwoIsPressed_ShouldSelectSecondOptionFromMainMenu() {
+        InputStream systemIn = System.in;
+        ByteArrayInputStream in = new ByteArrayInputStream("1".getBytes());
+        System.setIn(in);
+
+        app.selectOption(2);
+        assertEquals("2 - Checkout a book", BibliotecaApp.getSelectedOption().getDescription());
+        assertEquals(2, BibliotecaApp.getSelectedOption().getValue());
+    }
+
+    @Test
+    public void shouldShowAllCheckoutableBooks() {
+        assertEquals("1. Orope: The White Snake\n2. The Great Gatsby\n3. Boulevard Dreams\n", app.getCheckoutableBooks());
+    }
+
+    @Test
+    public void shouldCheckoutABook() {
+        Book expectedBook = new Book(3, "Orope: The White Snake", "Guenevere Lee", "2018");
+        app.checkoutBook(3);
+        assertFalse(app.getAvailableBooks().contains(expectedBook));
+    }
+
+    @Test
+    public void shouldSelectABookToMakeAnAction() {
+        Book expectedBook = new Book(2, "Orope: The White Snake", "Guenevere Lee", "2018");
+        app.selectBookById(2);
+        assertEquals(expectedBook, app.getSelectedBook());
+    }
+
 }
