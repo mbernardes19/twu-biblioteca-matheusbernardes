@@ -189,4 +189,9 @@ public class BibliotecaAppTest {
         assertFalse(app.getCheckedOutBooks().contains(expectedBook));
         assertEquals("2. The Great Gatsby\n3. Boulevard Dreams\n1. Orope: The White Snake\n", app.getCheckoutableBooks());
     }
+
+    @Test
+    public void shouldSendSucessMessageOnBookReturn() {
+        assertEquals("Thank you for returning the book\n", app.BOOK_RETURN_SUCCESS_MESSAGE);
+    }
 }

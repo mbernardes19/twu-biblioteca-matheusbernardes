@@ -11,6 +11,7 @@ public class BibliotecaApp {
     private static final String ERROR_MESSAGE = "Please select a valid option!";
     public static final String BOOK_CHECKOUT_SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
     public static final String BOOK_CHECKOUT_ERROR_MESSAGE = "Sorry, that book is not available\n";
+    public static final String BOOK_RETURN_SUCCESS_MESSAGE = "Thank you for returning the book\n";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
@@ -72,29 +73,13 @@ public class BibliotecaApp {
             case 0:
                 finishApplication();
             case 1:
-                selectedOption = MainMenuOption.OPTION_1;
-                showMessage(getAllAvailableBooks());
+                doBookList();
                 break;
             case 2:
-                selectedOption = MainMenuOption.OPTION_2;
-                showMessage("Select a book to checkout: ");
-                showMessage(getCheckoutableBooks());
-                try {
-                    checkoutBook(getBookIdInput());
-                    showMessage(BOOK_CHECKOUT_SUCCESS_MESSAGE);
-                } catch(BookNotFoundException err) {
-                    showMessage(BOOK_CHECKOUT_ERROR_MESSAGE);
-                }
+                doBookCheckout();
                 break;
             case 3:
-                selectedOption = MainMenuOption.OPTION_3;
-                showMessage("Select a book to return: ");
-                showMessage(getAllCheckedOutBooks());
-                try {
-                    returnBook(getBookIdInput());
-                } catch (BookNotFoundException err) {
-
-                }
+                doBookReturn();
                 break;
             default:
                 throw new InvalidParameterException("Please select a valid option!");
@@ -176,5 +161,34 @@ public class BibliotecaApp {
     public void returnBook(int bookId) throws BookNotFoundException {
         selectBookById(bookId, BookListOption.CHECKEDOUT_BOOKS);
         bookRepository.returnBook(getSelectedBook());
+    }
+
+    private void doBookCheckout() {
+        selectedOption = MainMenuOption.OPTION_2;
+        showMessage("Select a book to checkout: ");
+        showMessage(getCheckoutableBooks());
+        try {
+            checkoutBook(getBookIdInput());
+            showMessage(BOOK_CHECKOUT_SUCCESS_MESSAGE);
+        } catch(BookNotFoundException err) {
+            showMessage(BOOK_CHECKOUT_ERROR_MESSAGE);
+        }
+    }
+
+    private void doBookReturn() {
+        selectedOption = MainMenuOption.OPTION_3;
+        showMessage("Select a book to return: ");
+        showMessage(getAllCheckedOutBooks());
+        try {
+            returnBook(getBookIdInput());
+            showMessage(BOOK_RETURN_SUCCESS_MESSAGE);
+        } catch (BookNotFoundException err) {
+
+        }
+    }
+
+    private void doBookList() {
+        selectedOption = MainMenuOption.OPTION_1;
+        showMessage(getAllAvailableBooks());
     }
 }
