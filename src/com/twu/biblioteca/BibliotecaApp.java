@@ -74,6 +74,8 @@ public class BibliotecaApp {
 
     public void selectOption(int optionNumber) throws InvalidParameterException {
         switch(optionNumber) {
+            case 0:
+                finishApplication();
             case 1:
                 selectedOption = MainMenuOption.OPTION_1;
                 showMessage(getAllBooks());
@@ -94,6 +96,10 @@ public class BibliotecaApp {
 
     public static MainMenuOption getSelectedOption() {
         return selectedOption;
+    }
+
+    private void finishApplication() {
+        System.exit(0);
     }
 
     private static Scanner startInput() {

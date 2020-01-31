@@ -2,14 +2,20 @@ package com.twu.biblioteca;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 public class BibliotecaAppTest {
+
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     private BibliotecaApp app;
 
@@ -81,7 +87,13 @@ public class BibliotecaAppTest {
     }
 
     @Test(expected = InvalidParameterException.class)
-    public void ShouldThrowInvalidParameterException_IfASelectedOptionIsValid() {
+    public void shouldThrowInvalidParameterException_IfASelectedOptionIsValid() {
         app.selectOption(50);
+    }
+
+    @Test
+    public void shouldEndApplication_IfZeroOptionIsSelectedFromMainMenu() {
+        exit.expectSystemExit();
+        app.selectOption(0);
     }
 }
