@@ -23,16 +23,20 @@ public class BibliotecaAppTest {
 
     private BibliotecaApp app;
     private List<Book> expectedAvailableBooks;
+    private List<Book> checkedOutBooks;
 
     @Before
     public void before() {
         app = new BibliotecaApp();
 
+        checkedOutBooks = new ArrayList<>();
         expectedAvailableBooks = new ArrayList<>();
+
         expectedAvailableBooks.add(new Book(1,"Orope: The White Snake","Guenevere Lee", "2018"));
         expectedAvailableBooks.add(new Book(2,"The Great Gatsby","F. Scott Fitzgerald", "1925"));
         expectedAvailableBooks.add(new Book(3,"Boulevard Dreams","E. Ryan Janz", "2018"));
 
+        app.setCheckedOutBooks(checkedOutBooks);
         app.setAvailableBooks(expectedAvailableBooks);
     }
 
@@ -44,7 +48,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldShowAListOfAllAvailableBooks(){
-        String allBooks = app.getAllBooks();
+        String allBooks = app.getAllAvailableBooks();
         assertTrue(
                 allBooks.contains("Orope: The White Snake") &&
                         allBooks.contains("The Great Gatsby") &&
@@ -65,7 +69,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldShowBooksAuthorAndPublicationYear() {
-        String expectedBooks = app.getAllBooks();
+        String expectedBooks = app.getAllAvailableBooks();
         assertTrue(
                 expectedBooks.contains("Guenevere Lee") &&
                         expectedBooks.contains("2018") &&
@@ -83,7 +87,7 @@ public class BibliotecaAppTest {
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "The Great Gatsby", "F. Scott Fitzgerald", "1925");
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "Boulevard Dreams", "E. Ryan Janz", "2018");
 
-        assertEquals(expected, app.getAllBooks());
+        assertEquals(expected, app.getAllAvailableBooks());
     }
 
     @Test
@@ -135,7 +139,7 @@ public class BibliotecaAppTest {
     @Test
     public void shouldSelectABookToMakeAnAction() throws BookNotFoundException {
         Book expectedBook = new Book(2, "Orope: The White Snake", "Guenevere Lee", "2018");
-        app.selectBookById(2);
+        app.selectBookById(2, BookListOption.AVAILABLE_BOOKS);
         assertEquals(expectedBook, app.getSelectedBook());
     }
 
@@ -146,7 +150,43 @@ public class BibliotecaAppTest {
 
     @Test(expected = BookNotFoundException.class)
     public void shouldThrowError_IfSelectedBookForCheckOutDoesntExist() throws BookNotFoundException {
-        app.selectBookById(45);
+        app.selectBookById(45, BookListOption.AVAILABLE_BOOKS);
     }
 
+    @Test
+    public void shouldShowOneCheckedOutBook() throws BookNotFoundException {
+        app.checkoutBook(1);
+        assertEquals("1. Orope: The White Snake\n", app.getAllCheckedOutBooks());
+    }
+
+    @Test
+    public void shouldShowTwoCheckedOutBooks() throws BookNotFoundException {
+        app.checkoutBook(3);
+        app.checkoutBook(2);
+        assertEquals("3. Boulevard Dreams\n2. The Great Gatsby\n", app.getAllCheckedOutBooks());
+    }
+
+    @Test
+    public void ifThreeIsPressed_ShouldSelectThirdOptionFromMainMenu() {
+        InputStream systemIn = System.in;
+        ByteArrayInputStream in = new ByteArrayInputStream("3".getBytes());
+        System.setIn(in);
+
+        app.selectOption(3);
+        assertEquals("3 - Return a book", BibliotecaApp.getSelectedOption().getDescription());
+        assertEquals(3, BibliotecaApp.getSelectedOption().getValue());
+    }
+
+    @Test
+    public void shouldReturnABook() throws BookNotFoundException {
+        Book expectedBook = new Book(1, "Orope: The White Snake","Guenevere Lee", "2018");
+
+        app.checkoutBook(1);
+        assertFalse(app.getAvailableBooks().contains(expectedBook));
+        assertTrue(app.getCheckedOutBooks().contains(expectedBook));
+        app.returnBook(1);
+        assertTrue(app.getAvailableBooks().contains(expectedBook));
+        assertFalse(app.getCheckedOutBooks().contains(expectedBook));
+        assertEquals("2. The Great Gatsby\n3. Boulevard Dreams\n1. Orope: The White Snake\n", app.getCheckoutableBooks());
+    }
 }

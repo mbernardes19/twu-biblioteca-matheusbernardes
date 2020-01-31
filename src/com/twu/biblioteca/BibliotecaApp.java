@@ -43,7 +43,7 @@ public class BibliotecaApp {
         return WELCOME_MESSAGE;
     }
 
-    public String getAllBooks() {
+    public String getAllAvailableBooks() {
         String message = showAsTable("TITLE","AUTHOR", "PUBLICATION YEAR");
         for (Book availableBook : getAvailableBooks()) {
             message += showAsTable(availableBook.getTitle(), availableBook.getAuthor(), availableBook.getPublicationYear());
@@ -73,7 +73,7 @@ public class BibliotecaApp {
                 finishApplication();
             case 1:
                 selectedOption = MainMenuOption.OPTION_1;
-                showMessage(getAllBooks());
+                showMessage(getAllAvailableBooks());
                 break;
             case 2:
                 selectedOption = MainMenuOption.OPTION_2;
@@ -84,6 +84,16 @@ public class BibliotecaApp {
                     showMessage(BOOK_CHECKOUT_SUCCESS_MESSAGE);
                 } catch(BookNotFoundException err) {
                     showMessage(BOOK_CHECKOUT_ERROR_MESSAGE);
+                }
+                break;
+            case 3:
+                selectedOption = MainMenuOption.OPTION_3;
+                showMessage("Select a book to return: ");
+                showMessage(getAllCheckedOutBooks());
+                try {
+                    returnBook(getBookIdInput());
+                } catch (BookNotFoundException err) {
+
                 }
                 break;
             default:
@@ -122,13 +132,19 @@ public class BibliotecaApp {
     }
 
     public void checkoutBook(int bookId) throws BookNotFoundException {
-        selectBookById(bookId);
-        bookRepository.removeBook(getSelectedBook());
+        selectBookById(bookId, BookListOption.AVAILABLE_BOOKS);
+        bookRepository.checkoutBook(getSelectedBook());
     }
 
-    public void selectBookById(int id) throws BookNotFoundException {
-        Book foundBook = bookRepository.findBookById(id);
-        selectedBook = foundBook;
+    public void selectBookById(int id, BookListOption list) throws BookNotFoundException {
+        if (list == BookListOption.AVAILABLE_BOOKS) {
+            Book foundBook = bookRepository.findBookInAvailableBooks(id);
+            selectedBook = foundBook;
+        }
+        if (list == BookListOption.CHECKEDOUT_BOOKS) {
+            Book foundBook = bookRepository.findBookInCheckedOutBooks(id);
+            selectedBook = foundBook;
+        }
     }
 
     public Book getSelectedBook() {
@@ -139,5 +155,26 @@ public class BibliotecaApp {
         String bookIdInput = startInput().next();
         int bookId = Integer.parseInt(bookIdInput);
         return bookId;
+    }
+
+    public List<Book> getCheckedOutBooks() {
+        return bookRepository.getCheckedOutBooks();
+    }
+
+    public void setCheckedOutBooks(List<Book> bookList) {
+        bookRepository.setCheckedOutBooks(bookList);
+    }
+
+    public String getAllCheckedOutBooks() {
+        String message = "";
+        for (Book book : getCheckedOutBooks()) {
+            message += book.getId() + ". " + book.getTitle() + "\n";
+        }
+        return message;
+    }
+
+    public void returnBook(int bookId) throws BookNotFoundException {
+        selectBookById(bookId, BookListOption.CHECKEDOUT_BOOKS);
+        bookRepository.returnBook(getSelectedBook());
     }
 }

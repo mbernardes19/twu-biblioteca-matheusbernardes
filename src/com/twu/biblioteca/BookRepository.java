@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class BookRepository {
     private List<Book> availableBooks = new ArrayList<>();
+    private List<Book> checkedOutBooks = new ArrayList<>();
 
     public BookRepository() {
         populateAvailableBooks();
@@ -25,12 +26,13 @@ public class BookRepository {
     public List<Book> getAvailableBooks() {
         return availableBooks;
     }
-
     public void setAvailableBooks(List<Book> bookList) {
         this.availableBooks = bookList;
     }
+    public List<Book> getCheckedOutBooks() { return checkedOutBooks; }
+    public void setCheckedOutBooks(List<Book> bookList) { this.checkedOutBooks = bookList; }
 
-    public Book findBookById(int id) throws BookNotFoundException {
+    public Book findBookInAvailableBooks(int id) throws BookNotFoundException {
         Book bookFound = availableBooks.stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
@@ -38,11 +40,21 @@ public class BookRepository {
         return bookFound;
     }
 
-    public void removeBook(Book book) {
-        List<Book> newAvailableBooks = availableBooks.stream()
-                .filter(availableBook -> !availableBook.equals(book))
-                .collect(Collectors.toList());
+    public Book findBookInCheckedOutBooks(int id) throws BookNotFoundException {
+        Book bookFound = checkedOutBooks.stream()
+                .filter(book -> book.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new BookNotFoundException("Sorry, that book is not available"));
+        return bookFound;
+    }
 
-        this.availableBooks = newAvailableBooks;
+    public void checkoutBook(Book book) {
+        this.checkedOutBooks.add(book);
+        this.availableBooks.remove(book);
+    }
+
+    public void returnBook(Book book) {
+        this.availableBooks.add(book);
+        this.checkedOutBooks.remove(book);
     }
 }
