@@ -61,4 +61,13 @@ public class Movie {
         }
         this.rating = rating;
     }
+
+    public String getRatingText() {
+        if (rating == 0) {
+            return "Unrated";
+        }
+         else {
+             return String.valueOf(rating);
+        }
+    }
 }

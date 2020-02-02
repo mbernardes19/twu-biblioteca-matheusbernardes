@@ -44,4 +44,16 @@ public class MovieTest {
         assertEquals("Joseph Blinker", movie.getDirector());
         assertEquals(0, movie.getRating());
     }
+
+    @Test
+    public void ifMovieIsUnrated_ShouldReturnUnratedDescription() {
+        Movie movie = new Movie("The Movie", "2020", "Joseph Blinker");
+        assertEquals("Unrated", movie.getRatingText());
+    }
+    @Test
+    public void shouldReturnTheRatingAsString() {
+        Movie movie = new Movie("The Movie", "2020", "Joseph Blinker", 8);
+        assertEquals("8", movie.getRatingText());
+    }
+
 }
