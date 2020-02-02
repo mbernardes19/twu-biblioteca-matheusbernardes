@@ -1,5 +1,7 @@
 package com.twu.biblioteca;
 
+import java.security.InvalidParameterException;
+
 public class Movie {
     private String name;
     private String year;
@@ -10,7 +12,19 @@ public class Movie {
         this.name = name;
         this.year = year;
         this.director = director;
-        this.rating = rating;
+        try {
+            setRating(rating);
+        } catch (InvalidParameterException err) {
+            System.out.println(err.getMessage());
+        }
+
+    }
+
+    public Movie(String name, String year, String director) {
+        this.name = name;
+        this.year = year;
+        this.director = director;
+        this.rating = 0;
     }
 
     public String getName() {
@@ -41,7 +55,10 @@ public class Movie {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(int rating) throws InvalidParameterException {
+        if (rating < 0 || rating > 10) {
+            throw new InvalidParameterException("A movie should be rated from 1 to 10");
+        }
         this.rating = rating;
     }
 }
