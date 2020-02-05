@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BibliotecaApp {
-    private static final String WELCOME_MESSAGE = "Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!";
-    private static final String ERROR_MESSAGE = "Please select a valid option!";
-    public static final String BOOK_CHECKOUT_SUCCESS_MESSAGE = "Thank you! Enjoy the book\n";
-    public static final String BOOK_CHECKOUT_ERROR_MESSAGE = "Sorry, that book is not available\n";
-    public static final String BOOK_RETURN_SUCCESS_MESSAGE = "Thank you for returning the book\n";
-    public static final String BOOK_RETURN_ERROR_MESSAGE = "That is not a valid book to return\n";
     private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
@@ -22,27 +16,23 @@ public class BibliotecaApp {
 
     public static void main(String[] args) {
         BibliotecaApp app = new BibliotecaApp();
-        showMessage(getWelcomeMessage());
+        Printer.printMessage(getWelcomeMessage());
         Scanner input = startInput();
 
         // Show main menu and check selected option
         while(!isSelectedOptionValid() || selectedOption != MainMenuOption.OPTION_0) {
             try {
-                showMessage(mainMenuOptions());
+                Printer.printMessage(getWelcomeMessage());
                 app.selectOption(input.nextInt());
             } catch(InvalidParameterException e){
-                showMessage(ERROR_MESSAGE);
+                Printer.printError(Message.ERROR_MESSAGE);
             }
         }
 
     }
 
-    private static void showMessage(String message) {
-        System.out.println(message);
-    }
-
     public static String getWelcomeMessage() {
-        return WELCOME_MESSAGE;
+        return Message.WELCOME_MESSAGE;
     }
 
     public String getAllAvailableBooks() {
@@ -166,30 +156,30 @@ public class BibliotecaApp {
 
     private void doBookCheckout() {
         selectedOption = MainMenuOption.OPTION_2;
-        showMessage("Select a book to checkout: ");
-        showMessage(getCheckoutableBooks());
+        Printer.printMessage("Select a book to checkout: ");
+        Printer.printMessage(getCheckoutableBooks());
         try {
             checkoutBook(getBookIdInput());
-            showMessage(BOOK_CHECKOUT_SUCCESS_MESSAGE);
+            Printer.printMessage(Message.BOOK_CHECKOUT_SUCCESS_MESSAGE);
         } catch(BookNotFoundException err) {
-            showMessage(BOOK_CHECKOUT_ERROR_MESSAGE);
+            Printer.printMessage(Message.BOOK_CHECKOUT_ERROR_MESSAGE);
         }
     }
 
     private void doBookReturn() {
         selectedOption = MainMenuOption.OPTION_3;
-        showMessage("Select a book to return: ");
-        showMessage(getAllCheckedOutBooks());
+        Printer.printMessage("Select a book to return: ");
+        Printer.printMessage(getAllCheckedOutBooks());
         try {
             returnBook(getBookIdInput());
-            showMessage(BOOK_RETURN_SUCCESS_MESSAGE);
+            Printer.printMessage(Message.BOOK_RETURN_SUCCESS_MESSAGE);
         } catch (BookNotFoundException err) {
-            showMessage(BOOK_RETURN_ERROR_MESSAGE);
+            Printer.printMessage(Message.BOOK_RETURN_ERROR_MESSAGE);
         }
     }
 
     private void doBookList() {
         selectedOption = MainMenuOption.OPTION_1;
-        showMessage(getAllAvailableBooks());
+        Printer.printMessage(getAllAvailableBooks());
     }
 }
