@@ -1,7 +1,7 @@
 package com.twu.biblioteca;
 
 public class Printer {
-    private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
+    private static final String COLUMN_FORMAT = "%-30.30s ";
 
     public static void printMessage(String message) {
         System.out.println(message);
@@ -14,9 +14,10 @@ public class Printer {
     public static void printTable(String... columns) {
         String tableFormat = "";
         for (String column : columns) {
-            tableFormat += "%-30.30s";
+            tableFormat += COLUMN_FORMAT;
         }
-        System.out.printf(tableFormat+"%n", columns);
+        String format = tableFormat.substring(0, tableFormat.length()-1);
+        System.out.printf(format+"%n", columns);
     }
 
 }
