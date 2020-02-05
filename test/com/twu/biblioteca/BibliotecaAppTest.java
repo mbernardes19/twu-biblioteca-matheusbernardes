@@ -1,13 +1,12 @@
 package com.twu.biblioteca;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -24,9 +23,19 @@ public class BibliotecaAppTest {
     private BibliotecaApp app;
     private List<Book> expectedAvailableBooks;
     private List<Book> checkedOutBooks;
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
+    private String output = outContent.toString();
 
     @Before
     public void before() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+        output = outContent.toString();
+
+
         app = new BibliotecaApp();
 
         checkedOutBooks = new ArrayList<>();
@@ -40,19 +49,19 @@ public class BibliotecaAppTest {
         app.setAvailableBooks(expectedAvailableBooks);
     }
 
-    @Test
-    public void shouldDisplayWelcomeMessage() {
-        BibliotecaApp.getWelcomeMessage();
-        assertEquals("Welcome to Biblioteca! Your one-stop-shop for great book titles in Bangalore!", BibliotecaApp.getWelcomeMessage());
+    @After
+    public void restoreStream() {
+        System.setOut(originalOut);
+        System.setErr(originalErr);
     }
 
     @Test
     public void shouldShowAListOfAllAvailableBooks(){
-        String allBooks = app.getAllAvailableBooks();
+        app.printAvailableBooks();
         assertTrue(
-                allBooks.contains("Orope: The White Snake") &&
-                        allBooks.contains("The Great Gatsby") &&
-                allBooks.contains("Boulevard Dreams")
+                outContent.toString().contains("Boulevard Dreams") &&
+                        outContent.toString().contains("Orope: The White Snake") &&
+                        outContent.toString().contains("Boulevard Dreams")
         );
     }
 
@@ -69,14 +78,14 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldShowBooksAuthorAndPublicationYear() {
-        String expectedBooks = app.getAllAvailableBooks();
+        app.printAvailableBooks();
         assertTrue(
-                expectedBooks.contains("Guenevere Lee") &&
-                        expectedBooks.contains("2018") &&
-                        expectedBooks.contains("F. Scott Fitzgerald") &&
-                        expectedBooks.contains("1925") &&
-                        expectedBooks.contains("E. Ryan Janz") &&
-                        expectedBooks.contains("2018")
+                outContent.toString().contains("Guenevere Lee") &&
+                        outContent.toString().contains("2018") &&
+                        outContent.toString().contains("F. Scott Fitzgerald") &&
+                        outContent.toString().contains("1925") &&
+                        outContent.toString().contains("E. Ryan Janz") &&
+                        outContent.toString().contains("2018")
         );
     }
 
@@ -87,7 +96,9 @@ public class BibliotecaAppTest {
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "The Great Gatsby", "F. Scott Fitzgerald", "1925");
         expected += String.format("%-30.30s %-30.30s %-30.30s%n", "Boulevard Dreams", "E. Ryan Janz", "2018");
 
-        assertEquals(expected, app.getAllAvailableBooks());
+        app.printAvailableBooks();
+
+        assertEquals(expected, outContent.toString());
     }
 
     @Test
@@ -145,7 +156,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldSendSucessMessageOnBookCheckout() {
-        assertEquals("Thank you! Enjoy the book\n", app.BOOK_CHECKOUT_SUCCESS_MESSAGE);
+        assertEquals("Thank you! Enjoy the book\n", Message.BOOK_CHECKOUT_SUCCESS_MESSAGE);
     }
 
     @Test(expected = BookNotFoundException.class)
@@ -192,7 +203,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void shouldSendSucessMessageOnBookReturn() {
-        assertEquals("Thank you for returning the book\n", app.BOOK_RETURN_SUCCESS_MESSAGE);
+        assertEquals("Thank you for returning the book\n", Message.BOOK_RETURN_SUCCESS_MESSAGE);
     }
 
     @Test(expected = BookNotFoundException.class)
