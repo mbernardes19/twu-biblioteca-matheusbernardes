@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BibliotecaApp {
-    private static final String TABLE_FORMAT = "%-30.30s %-30.30s %-30.30s%n";
     private static BookRepository bookRepository = new BookRepository();
     private static List<Book> availableBooks = bookRepository.getAvailableBooks();
     private static MainMenu mainMenu = new MainMenu();
@@ -16,13 +15,13 @@ public class BibliotecaApp {
 
     public static void main(String[] args) {
         BibliotecaApp app = new BibliotecaApp();
-        Printer.printMessage(getWelcomeMessage());
+        Printer.printMessage(Message.WELCOME_MESSAGE);
         Scanner input = startInput();
 
         // Show main menu and check selected option
         while(!isSelectedOptionValid() || selectedOption != MainMenuOption.OPTION_0) {
             try {
-                Printer.printMessage(getWelcomeMessage());
+                Printer.printMessage(mainMenuOptions());
                 app.selectOption(input.nextInt());
             } catch(InvalidParameterException e){
                 Printer.printError(Message.ERROR_MESSAGE);
@@ -31,20 +30,11 @@ public class BibliotecaApp {
 
     }
 
-    public static String getWelcomeMessage() {
-        return Message.WELCOME_MESSAGE;
-    }
-
-    public String getAllAvailableBooks() {
-        String message = showAsTable("TITLE","AUTHOR", "PUBLICATION YEAR");
+    public void printAvailableBooks() {
+        Printer.printTable("TITLE","AUTHOR", "PUBLICATION YEAR");
         for (Book availableBook : getAvailableBooks()) {
-            message += showAsTable(availableBook.getTitle(), availableBook.getAuthor(), availableBook.getPublicationYear());
+            Printer.printTable(availableBook.getTitle(), availableBook.getAuthor(), availableBook.getPublicationYear());
         }
-        return message;
-    }
-
-    private static String showAsTable(String... cols) {
-        return String.format(TABLE_FORMAT, cols);
     }
 
     public static String mainMenuOptions() {
@@ -180,6 +170,6 @@ public class BibliotecaApp {
 
     private void doBookList() {
         selectedOption = MainMenuOption.OPTION_1;
-        Printer.printMessage(getAllAvailableBooks());
+        printAvailableBooks();
     }
 }
